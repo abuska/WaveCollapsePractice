@@ -15,7 +15,7 @@ export function TileComponent({ tile, }: TileComponentProps) {
             <img
                 key={id}
                 src={require('../../assets/images/' + tile?.imageSrc)}
-                style={{ width: TILE_WIDTH, height: TILE_HEIGHT, transform: `rotate(${tile.rotation * 90}deg)` }}
+                style={{ width: TILE_WIDTH, height: TILE_HEIGHT, transform: `rotate(${tile.rotation * 90}deg)`, top: 0, left: 0, position: 'absolute',  }}
                 alt={"" + id}
             />
             :

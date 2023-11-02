@@ -261,7 +261,7 @@ export const useMainComponent = (): UseMainComponentValues => {
 
         let nextCellsState = nextCells(cellsCopy, cells);
         setCells(nextCellsState);   
-     }, []);
+    }, []);
 
     // -- Init grid -- grid purpose is to display the cells in a grid format
     // -- grid is calculated from cells 
@@ -269,6 +269,7 @@ export const useMainComponent = (): UseMainComponentValues => {
     
     // -- Init grid after cells are set
     useEffect(() => { 
+        calcCells();
         if (!cells.length) return;
         
         let newGrid = [] as CellType[][];
