@@ -23,9 +23,9 @@ export function MainComponent() {
         <div key={'row' + rowIndex} style={{ display: 'flex', flexDirection: 'row' }}>
 
           {row.map((cell, index) =>
-            <div key={'row'+index+rowIndex} style={{position: 'relative'}}>
+            <div key={'row'+index+rowIndex}>
               <TileComponent tile={cell?.tile} key={cell?.tile?.index + " " + index} />
-              <div style={{position: 'absolute', top: 0, fontSize: 30, color: 'white'}} key={cell?.tile?.index + " " + index+'div'}  >{cell.index}</div>
+              {/*<div style={{ position: 'absolute', top: 0, fontSize: 30, color: 'white' }} key={cell?.tile?.index + " " + index + 'div'}  >{cell.index}</div>*/}
             </div>
           )}
         </div>

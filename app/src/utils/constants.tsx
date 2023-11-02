@@ -1,6 +1,6 @@
 // -- GRID SETTINGS
 
-export const DIMENSION = 5;
+export const DIMENSION = 20;
 export const BOARD_WIDTH = 500;
 export const BOARD_HEIGHT = 500;
 
