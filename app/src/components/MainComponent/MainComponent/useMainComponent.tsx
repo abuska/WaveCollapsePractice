@@ -35,6 +35,10 @@ export const useMainComponent = (): UseMainComponentValues => {
     }
 
     const analyzeTiles = useCallback((newTiles: TileType[], newTile: TileType, newTileIndex: number) => {
+        newTile.up = new Set<string>();
+        newTile.right = new Set<string>();
+        newTile.down = new Set<string>();
+        newTile.left = new Set<string>();
         let tilesConcat = [...newTiles, newTile]
         if (!tilesConcat.length) return newTile;
         for (let i = 0; i < tilesConcat.length; i++) {
@@ -72,19 +76,10 @@ export const useMainComponent = (): UseMainComponentValues => {
     const rotate = useCallback((tile: TileType, index: number) => {
         const newEdges = [];
         const length = tile.edges.length;
-        const up = tile.up;
-        const right = tile.right;
-        const down = tile.down;
-        const left = tile.left;
 
         for (let i = 0; i < length; i++) {
             newEdges[i] = tile.edges[(i - index + length) % length];
-            //tile.up = index === 1 ? left : index === 2 ? up : index === 3 ? right : down;
-            //tile.right = index === 1 ? up : index === 2 ? right : index === 3 ? down : left;
-            //tile.down = index === 1 ? right : index === 2 ? down : index === 3 ? left : up;
-            //tile.left = index === 1 ? down : index === 2 ? left : index === 3 ? up : right;
         }
-
         return { ...tile, edges: newEdges, index: index, rotation: index };
     }, []);
 
@@ -103,26 +98,30 @@ export const useMainComponent = (): UseMainComponentValues => {
             
             newTile = analyzeTiles(newTiles, newTile, i);
             newTiles.push(newTile);
-            //console.log('initTiles', newTile);
         } 
-
-        /*const initialTileCount = TILE_COUNT;
-        let tempTiles = [];
+        
+        const initialTileCount = TILE_COUNT;
+       // let tempTiles = [];
         for (let i = 0; i < initialTileCount; i++) {
             // todo write back 4
-            for (let j = 0; j < 4; j++) {
+            for (let j = 0; j <= 3; j++) {
                 let rotatedTile = rotate(newTiles[i], j);
+                rotatedTile.index = newTiles.length;
+                
                 // check if the rotated tile is already exist in the tiles array if not add it
-                if (![...newTiles, ...tempTiles].some((tile) => tile.edges.every((edge, index) => edge === rotatedTile.edges[index]))) {
-                    rotatedTile.index = tempTiles.length + TILE_COUNT;
+                if (!newTiles.some((tile) => tile.edges.every((edge, index) => edge === rotatedTile.edges[index]))) {
+                    
                     rotatedTile = analyzeTiles(newTiles, rotatedTile, rotatedTile.index);
-                    tempTiles.push(rotatedTile);
+                    newTiles.push(rotatedTile);
                 }
             }
         }
         // add the rotated tiles to the tiles array
         //console.log('tempTiles', newTiles.concat(tempTiles));
-        newTiles = newTiles.concat(tempTiles);*/
+        //newTiles = newTiles.concat(tempTiles);
+        
+        console.log('initTiles', newTiles);
+        
         return newTiles;
     }, []);
     
@@ -149,12 +148,6 @@ export const useMainComponent = (): UseMainComponentValues => {
 
     // -- Init cells -- cells are the actual tiles that are placed on the board
     const [cells, setCells] = useState<CellType[]>(initCells());
-    
-    // -- Init cells at first render
-    /*useEffect(() => {
-        let cells = initCells();
-        setCells(cells);
-    }, []);*/
 
   
 
@@ -228,57 +221,57 @@ export const useMainComponent = (): UseMainComponentValues => {
                         let validOptions = [] as string[];
                         
                         for (let option of upCell.options) {
-                            console.log('upCell.options and index: ', upCell.index, tiles[Number(option)].down);
+                           // console.log('upCell.options and index: ', upCell.index, tiles[Number(option)].down);
                         
 
                             let valid =[]as string[];
                             tiles[Number(option)].down.forEach((value: string) => valid.push(value));
                             validOptions = validOptions.concat(valid);
 
-                            console.log('validOptions', validOptions);
+                           // console.log('validOptions', validOptions);
                         }
                         options = options.filter(element => validOptions.includes(element));
                     }
                     if (rightCell != null && i < DIMENSION - 1) {
                         let validOptions = [] as string[];
                         for (let option of rightCell.options) {
-                            console.log('right.options and index: ', rightCell.index, tiles[Number(option)].left);
+                           // console.log('right.options and index: ', rightCell.index, tiles[Number(option)].left);
 
                             let valid = [] as string[];
                             tiles[Number(option)].left.forEach((value: string) => valid.push(value));
                             validOptions = validOptions.concat(valid);
 
-                            console.log('validOptions', validOptions);
+                            //console.log('validOptions', validOptions);
                         }
                         options = options.filter(element => validOptions.includes(element));
                     }
                     if (downCell != null && j < DIMENSION - 1) {
                         let validOptions = [] as string[];
                         for (let option of downCell.options) {
-                            console.log('down.options and index: ', downCell.index, tiles[Number(option)].up);
+                           // console.log('down.options and index: ', downCell.index, tiles[Number(option)].up);
 
                             let valid = [] as string[];
                             tiles[Number(option)].up.forEach((value: string) => valid.push(value));
                             validOptions = validOptions.concat(valid);
 
-                            console.log('validOptions', validOptions);
+                           // console.log('validOptions', validOptions);
                         }
                         options = options.filter(element => validOptions.includes(element));
                     }
                     if (leftCell != null && i > 0) {
                         let validOptions = [] as string[];
                         for (let option of leftCell.options) {
-                            console.log('left.options and index: ', leftCell.index, tiles[Number(option)].right);
+                          //  console.log('left.options and index: ', leftCell.index, tiles[Number(option)].right);
 
                             let valid = [] as string[];
                             tiles[Number(option)].right.forEach((value: string) => valid.push(value));
                             validOptions = validOptions.concat(valid);
 
-                            console.log('validOptions', validOptions);
+                           // console.log('validOptions', validOptions);
                         }
                         options = options.filter(element => validOptions.includes(element));
                     }
-                    console.log('options', options);
+                    //console.log('options', options);
                     currentCell.options = options;
                     fullCellsCopy[index] = currentCell;
                 }
@@ -294,11 +287,12 @@ export const useMainComponent = (): UseMainComponentValues => {
         // -- Filter cells that are not collapsed
         let cellsCopy = [...cells];
         cellsCopy = cellsCopy.filter((cell) => !cell.collapsed);
+        if(cellsCopy[0] == undefined) return;
         
         // -- Sort cells by options length
-        cellsCopy.sort((a, b) => a.options.length - b.options.length);
+        cellsCopy = cellsCopy.sort((a, b) => a.options.length - b.options.length);
+        console.log('cellsCopy sorted', cellsCopy);
 
-        if(cellsCopy[0] == undefined) return;
         let len = cellsCopy[0].options.length;
         let stopIndex = 0;
 
@@ -310,14 +304,10 @@ export const useMainComponent = (): UseMainComponentValues => {
                 break;
             }
         }
-        if (cellsCopy.length == 0) {
-            console.log('cellsCopy.length == 0');
-            initCells();
-        }
         console.log('stopIndex', stopIndex);
 
 
-        const randomCellIndex = Math.floor(Math.random() * cellsCopy.length)
+        const randomCellIndex = Math.floor(Math.random() * stopIndex)
      
 
         console.log('Cell wit randomCellIndex', randomCellIndex, cellsCopy[randomCellIndex]);

@@ -11,14 +11,14 @@ export const TILE_WIDTH = BOARD_WIDTH / DIMENSION;
 
 // -- TILE IMAGE SETTINGS
 
-export const TILE_COUNT = 5;
-export const TILE_PATH = 'demo/';
+export const TILE_COUNT = 13;
+export const TILE_PATH = 'circuit/';
 export const TILE_EXTENSION = '.png';
 
 // -- TILE EDGE SETTINGS
 // 0 - up , 1 - right, 2 - down, 3 - left
 export const EDGES = [
-    /*['AAA', 'AAA', 'AAA', 'AAA'], // 0
+    ['AAA', 'AAA', 'AAA', 'AAA'], // 0
     ['BBB', 'BBB', 'BBB', 'BBB'], // 1
     ['BBB', 'BCB', 'BBB', 'BBB'], // 2
     ['BBB', 'BDB', 'BBB', 'BDB'], // 3
@@ -33,15 +33,15 @@ export const EDGES = [
     ['BBB', 'BCB', 'BBB', 'BCB'], // 12
 
     
-    */
+    
    // 0 - up , 1 - right, 2 - down, 3 - left
    
-        ["A", "A", "A", "A"], 
+    /*    ["A", "A", "A", "A"], 
         ["A", "B", "B", "B"],
         ["B", 'A', 'B', 'B'],
         ["B", 'B', 'B', 'A'],
         ["B", 'B', 'A', 'B'],
-    
+    */
 ];
 
 

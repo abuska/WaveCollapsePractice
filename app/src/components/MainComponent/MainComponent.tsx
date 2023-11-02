@@ -38,6 +38,7 @@ export function MainComponent() {
 
   return (
     <div>
+    
       <div key={'boardContainer'} style={{width: BOARD_WIDTH, height: BOARD_HEIGHT, backgroundColor: 'black' }}>
         {board()}
       </div>
