@@ -94,29 +94,31 @@ export const useMainComponent = (): UseMainComponentValues => {
                 left: new Set<string>(),
             } as TileType;
             
-            newTile = analyzeTiles(newTiles, newTile, i);
             newTiles.push(newTile);
         } 
         
-        const initialTileCount = TILE_COUNT;
-        for (let i = 0; i < initialTileCount; i++) {
-            for (let j = 0; j <= 3; j++) {
+        // -- Rotate tiles and add them to the tiles array
+        for (let i = 0; i < TILE_COUNT; i++) {
+            for (let j = 0; j <= 4; j++) {
                 let rotatedTile = rotate(newTiles[i], j);
                 rotatedTile.index = newTiles.length;
                 
                 // check if the rotated tile is already exist in the tiles array if not add it
                 if (!newTiles.some((tile) => tile.edges.every((edge, index) => edge === rotatedTile.edges[index]))) {
                     
-                    rotatedTile = analyzeTiles(newTiles, rotatedTile, rotatedTile.index);
                     newTiles.push(rotatedTile);
                 }
             }
+        }
+
+        for(let i = 0; i < newTiles.length; i++){
+            newTiles[i] = analyzeTiles(newTiles, newTiles[i], i);
         }
         
         return newTiles;
     }, []);
     
-    const [tiles, setTiles] = useState<TileType[]>(initTiles())
+    const tiles = initTiles();
     
     // -- Init cells function
     const initCells = useMemo(() => {
@@ -162,20 +164,10 @@ export const useMainComponent = (): UseMainComponentValues => {
                     for (let i = 0; i < tiles.length; i++) {
                         options.push(i.toString());
                     }
-                    
-                    
+
                     let upCell = newCells.find((cell) => cell.index === (i + (j - 1) * DIMENSION))
-                    if(upCell===undefined) upCell = fullCellsCopy[i + (j - 1) * DIMENSION];
-
-                    let rightCell = newCells.find((cell) => cell.index === (i + 1 + j * DIMENSION))
-                    if (rightCell === undefined) rightCell = fullCellsCopy[i + 1 + j * DIMENSION];
-       
-                    let downCell = newCells.find((cell) => cell.index === (i + (j + 1) * DIMENSION))
-                    if (downCell === undefined) downCell = fullCellsCopy[i + (j + 1) * DIMENSION];
-
-                    let leftCell = newCells.find((cell) => cell.index === (i - 1 + j * DIMENSION))
-                    if (leftCell === undefined) leftCell = fullCellsCopy[i - 1 + j * DIMENSION];
-
+                    if (upCell === undefined) upCell = fullCellsCopy[i + (j - 1) * DIMENSION];
+                    
                     if (upCell != null && j > 0) {
                         let validOptions = [] as string[];
                         
@@ -188,6 +180,10 @@ export const useMainComponent = (): UseMainComponentValues => {
                         }
                         options = options.filter(element => validOptions.includes(element));
                     }
+
+                    let rightCell = newCells.find((cell) => cell.index === (i + 1 + j * DIMENSION))
+                    if (rightCell === undefined) rightCell = fullCellsCopy[i + 1 + j * DIMENSION];
+
                     if (rightCell != null && i < DIMENSION - 1) {
                         let validOptions = [] as string[];
                         for (let option of rightCell.options) {
@@ -199,6 +195,10 @@ export const useMainComponent = (): UseMainComponentValues => {
                         }
                         options = options.filter(element => validOptions.includes(element));
                     }
+
+                    let downCell = newCells.find((cell) => cell.index === (i + (j + 1) * DIMENSION))
+                    if (downCell === undefined) downCell = fullCellsCopy[i + (j + 1) * DIMENSION];
+
                     if (downCell != null && j < DIMENSION - 1) {
                         let validOptions = [] as string[];
                         for (let option of downCell.options) {
@@ -210,6 +210,10 @@ export const useMainComponent = (): UseMainComponentValues => {
                         }
                         options = options.filter(element => validOptions.includes(element));
                     }
+
+                    let leftCell = newCells.find((cell) => cell.index === (i - 1 + j * DIMENSION))
+                    if (leftCell === undefined) leftCell = fullCellsCopy[i - 1 + j * DIMENSION];
+                    
                     if (leftCell != null && i > 0) {
                         let validOptions = [] as string[];
                         for (let option of leftCell.options) {
@@ -234,23 +238,31 @@ export const useMainComponent = (): UseMainComponentValues => {
         // -- Filter cells that are not collapsed
         let cellsCopy = [...cells];
         cellsCopy = cellsCopy.filter((cell) => !cell.collapsed);
+
+        // -- If no cells left return
         if(cellsCopy[0] == undefined) return;
         
-        // -- Sort cells by options length
+        // -- Sort cells by options length the less options first
         cellsCopy = cellsCopy.sort((a, b) => a.options.length - b.options.length);
-        let len = cellsCopy[0].options.length;
-        let stopIndex = 0;
 
-        // -- Find the first cell that has more than one option
+        // -- If the first cell has no options return because the generation is done 
+        // - or the board is not solvable
+        if (cellsCopy[0].options.length == 0) return;
+
+        // -- Select the sorted cell with the least options first element and save the options count
+        let len = cellsCopy[0].options.length;
+        
+        // -- Find the first cell with more options than the less options cell
+        let maxRandomIndex = 0;
         for (let i = 1; i < cellsCopy.length; i++) {
             if (cellsCopy[i].options.length!==0 && cellsCopy[i].options.length > len) {
 
-                stopIndex = i;
+                maxRandomIndex = i;
                 break;
             }
         }
 
-        const randomCellIndex = Math.floor(Math.random() * stopIndex)
+        const randomCellIndex = Math.floor(Math.random() * maxRandomIndex)
         const pick = cellsCopy[randomCellIndex]?.options[Math.floor(Math.random() * cellsCopy[randomCellIndex].options.length)];
         
         if (pick == undefined) return;
@@ -270,6 +282,7 @@ export const useMainComponent = (): UseMainComponentValues => {
     // -- Init grid after cells are set
     useEffect(() => { 
         calcCells();
+
         if (!cells.length) return;
         
         let newGrid = [] as CellType[][];
